@@ -142,10 +142,10 @@ const CONFIG={
 const ORDER=["mehendi","sangeet","haldi","wedding"];
 const EVENTS={
   puja:{title:"Grahamak & Mandap Mahurat",date:"Wednesday, 09th December",time:"9:00 AM onwards",venue:"Family Residence, Mumbai",map:""},
-  mehendi:{title:"Mehendi te Vaavi",date:"Friday, 10th December",time:"5:00 PM onwards",venue:"The Garden Lawn, Mumbai",dress:"Bright & festive",note:"Henna, chai & music",map:""},
-  sangeet:{title:"Sagai & Shor Sharaba",date:"Friday, 11th December",time:"7:00 PM onwards",venue:"The Grand Ballroom, Mumbai",dress:"Indo-western glam",note:"An evening of dance & dhol",map:""},
-  haldi:{title:"Prem Pithi",date:"Saturday, 12th December",time:"05:00 PM onwards",venue:"Courtyard, Family Residence",dress:"Yellow & florals",note:"Come dressed in yellow",map:""},
-  wedding:{title:"Mangal Pheras",date:"Sunday, 13th December",time:"Jaan Agaman: 10:30 AM & Hasta Melap: 12:30 PM",venue:"Grande Hall C, NESCO, Goregaon E, Mumbai", note:"Join us as we begin forever",map:""}
+  mehendi:{title:"Mehendi te Vaavi",date:"Friday, 10th December",time:"5:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
+  sangeet:{title:"Sagai & Shor Sharaba",date:"Friday, 11th December",time:"7:00 PM onwards",venue:"Embassy Hall, The Tunga Paradise, Andheri E, Mumbai",map:"https://maps.app.goo.gl/LN5z2YeihkLBGgSY9"},
+  haldi:{title:"Prem Pithi",date:"Saturday, 12th December",time:"05:00 PM onwards",venue:"Courtyard, Family Residence",map:""},
+  wedding:{title:"Mangal Pheras",date:"Sunday, 13th December",time:"Jaan Agaman: 10:30 AM & Hasta Melap: 12:30 PM",venue:"Grande Hall C, NESCO, Goregaon E, Mumbai", note:"Join us as we begin forever",map:"https://maps.app.goo.gl/5dkERaGTqrn8L21d6"}
 };
 // Name (first name, lowercase) → events invited to. Wedding is always shown.
 const GUESTS={
@@ -213,7 +213,7 @@ function build(){
   pages.forEach((k,i)=>{
     const src=CONFIG.bg[k],s=document.createElement('div');s.className='scene';s.id='s'+i;
     s.innerHTML=`<div class="ph">Add<br>${src}</div><img class="bg" src="${src}" alt="" onerror="this.style.display='none'">`;
-    if(k==='main')s.insertAdjacentHTML('beforeend',`<div id="hintG">Offer a hibiscus to Ganpati ji</div><div id="drop"></div><div class="tree">${CONFIG.drawTree?treeSVG:''}${CONFIG.flowerPos.map(([l,t])=>`<div class="flower" style="left:${l}%;top:${t}%">${hibImg}</div>`).join('')}</div>`);
+    if(k==='main')s.insertAdjacentHTML('beforeend',`<div id="hintG">Offer Bappa a flower</div><div id="drop"></div><div class="tree">${CONFIG.drawTree?treeSVG:''}${CONFIG.flowerPos.map(([l,t])=>`<div class="flower" style="left:${l}%;top:${t}%">${hibImg}</div>`).join('')}</div>`);
     if(k==='puja')s.insertAdjacentHTML('beforeend',`<div class="sit"><img class="gan" src="${CONFIG.ganpati}" draggable="false" alt="" onerror="this.style.display='none'"><div class="hib">${hibImg}</div></div>`);
     if(i>0&&i!==PETAL)s.insertAdjacentHTML('beforeend',`<div class="ev-over">${evHTML(k,inv.has(k))}</div>`);
     app.appendChild(s);scenes.push(s)});
