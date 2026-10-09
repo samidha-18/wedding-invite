@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You're Invited</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== CUSTOM FONTS: drop your files in assets/fonts/ with these names (see README) ===== */
+@font-face{font-family:'InviteDisplay';src:url('assets/fonts/display.woff2') format('woff2'),url('assets/fonts/display.ttf') format('truetype'),url('assets/fonts/display.otf') format('opentype');font-display:swap}
+@font-face{font-family:'InviteBody';src:url('assets/fonts/body.woff2') format('woff2'),url('assets/fonts/body.ttf') format('truetype'),url('assets/fonts/body.otf') format('opentype');font-display:swap}
+:root{--pink:#E38496;--forest:#1A3D28;--white:#FFFFFF;--sage:#617764;--olive:#B2AF87;--cream:#F9EDD5;
+--fd:'InviteDisplay','Cormorant Garamond',serif;--fb:'InviteBody','Jost',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--cream);color:var(--forest);font-family:var(--fb);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.frame{position:fixed;top:0;bottom:0;left:50%;width:min(100vw,480px);transform:translateX(-50%);overflow:hidden;background:var(--cream);box-shadow:0 0 60px rgba(97,119,100,.25)}
+#dust{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:100}
+
+/* LOGO */
+#logo{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--cream);transition:opacity 1.2s}
+#logo.gone{opacity:0;pointer-events:none}
+#logoBox{width:62%;aspect-ratio:1;display:grid;place-items:center}
+#logoBox img{width:100%;height:100%;object-fit:contain}
+.mono{display:none;text-align:center;color:var(--pink);font-family:var(--fd);font-size:3.4rem;line-height:1.1}
+.mono small{display:block;font-size:1rem;letter-spacing:.35em;color:var(--forest);margin-top:.6rem;font-family:var(--fb)}
+#hint{margin-top:2.2rem;font-size:.8rem;letter-spacing:.3em;text-transform:uppercase;color:var(--forest);opacity:.7;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+/* NAME */
+#nameModal{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:rgba(249,237,213,.55);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .8s}
+#nameModal.show{opacity:1;pointer-events:auto}
+.card{width:82%;background:var(--white);border:1px solid var(--olive);border-radius:22px;padding:2rem 1.6rem;text-align:center;box-shadow:0 18px 50px rgba(26,61,40,.18);transform:translateY(14px);transition:transform .8s}
+#nameModal.show .card{transform:none}
+.card h2{font-family:var(--fd);font-weight:600;font-size:2rem;color:var(--pink)}
+.card p{margin:.4rem 0 1.2rem;color:var(--forest);font-size:.9rem}
+.card input{width:100%;padding:.85rem 1rem;border:1px solid var(--olive);border-radius:12px;background:var(--cream);color:var(--forest);font:inherit;font-size:1rem;text-align:center;outline:none;user-select:text;-webkit-user-select:text}
+.card input::placeholder{color:var(--sage)}
+.card input:focus{border-color:var(--pink)}
+.btn{margin-top:1rem;width:100%;padding:.85rem;border:0;border-radius:12px;background:var(--pink);color:var(--white);font:500 .95rem var(--fb);letter-spacing:.25em;text-transform:uppercase;cursor:pointer}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* SCENES */
+#app{position:absolute;inset:0;opacity:0;transition:opacity 1.2s}
+#app.on{opacity:1}
+.scene{position:absolute;inset:0;background:var(--cream);transform:translateY(100%);transition:transform 1s cubic-bezier(.65,0,.25,1);overflow:hidden}
+.scene.active{transform:none}
+.scene.past{transform:translateY(-100%)}
+.scene img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .9s}
+.scene.dim img.bg{opacity:.22}
+.ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:2rem;background:linear-gradient(160deg,var(--cream),var(--olive) 140%);color:var(--forest);font-size:.85rem;letter-spacing:.1em}
+
+/* FLY-IN TEXT */
+.fx{opacity:0}
+@keyframes flyU{from{opacity:0;transform:translateY(46px)}to{opacity:1;transform:none}}
+@keyframes flyL{from{opacity:0;transform:translateX(-90px)}to{opacity:1;transform:none}}
+@keyframes flyR{from{opacity:0;transform:translateX(90px)}to{opacity:1;transform:none}}
+@keyframes settle{from{opacity:0;transform:translateY(-70px) rotate(-40deg) scale(.5)}to{opacity:1;transform:none}}
+.fx.l{--a:flyL}.fx.r{--a:flyR}
+.scene.active:not(#s0) .fx,#nameModal.show .fx,#logo .fx,#pop.show .fx{animation:var(--a,flyU) 1.3s cubic-bezier(.2,.8,.2,1) var(--d,.6s) both}
+
+/* PAGE 1: offering */
+#hintG{position:absolute;top:max(1.4rem,env(safe-area-inset-top));width:100%;text-align:center;color:var(--white);font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;text-shadow:0 1px 8px var(--forest);z-index:6;animation:flyU 1.4s .9s both}
+.tree{position:absolute;right:-2%;bottom:0;width:58%;height:52%;z-index:5}
+.tree svg.t{width:100%;height:100%}
+.flower{position:absolute;width:58px;height:58px;transform:translate(-50%,-50%);cursor:grab;touch-action:none;z-index:7;filter:drop-shadow(0 2px 6px rgba(26,61,40,.35));transition:transform .35s,opacity .5s}
+.flower.drag{transition:none;cursor:grabbing;z-index:30}
+.flower img,.flower svg{width:100%;height:100%;object-fit:contain;pointer-events:none;display:block}
+#drop{position:absolute;left:50%;bottom:7%;width:110px;height:110px;margin-left:-55px;border-radius:50%;border:1.5px dashed var(--white);box-shadow:0 0 30px rgba(255,255,255,.55),inset 0 0 24px rgba(227,132,150,.4);animation:pulse 2.6s infinite;z-index:4}
+
+/* PAGE 2: ganpati + flower sit together */
+.sit{position:absolute;left:0;right:0;top:8%;height:46%;display:flex;justify-content:center;align-items:flex-end;z-index:2}
+.sit::before{content:"";position:absolute;inset:-10% 5% 0;background:radial-gradient(closest-side,rgba(255,255,255,.4),transparent);}
+.gan{position:relative;height:100%;max-width:84%;object-fit:contain;opacity:0}
+.hib{position:absolute;bottom:-3%;left:56%;width:25%;opacity:0;filter:drop-shadow(0 4px 8px rgba(26,61,40,.35))}
+.hib svg{width:100%}
+.scene.active .gan{animation:flyU 1.5s .4s cubic-bezier(.2,.8,.2,1) both}
+.scene.active .hib{animation:settle 1.4s 1.1s cubic-bezier(.2,.8,.2,1) both}
+
+/* EVENT DETAILS OVER IMAGE */
+.ev-over{position:absolute;left:0;right:0;bottom:0;padding:5rem 1.5rem 2.6rem;text-align:center;background:linear-gradient(transparent,rgba(26,61,40,.88));z-index:3;pointer-events:none}
+.ev-over .tg{font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--white)}
+.ev-over h2{font-family:var(--fd);font-weight:600;font-size:2.7rem;line-height:1.1;color:var(--pink);margin:.2rem 0 .5rem}
+.ev-over p{color:var(--white);font-size:1rem;margin:.18rem 0}
+.maplink{display:inline-block;margin-top:.9rem;padding:.55rem 1.3rem;border:1px solid currentColor;border-radius:999px;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;pointer-events:auto;cursor:pointer}
+.ev-over .maplink{color:var(--white)}#pop .maplink{color:var(--pink)}
+
+/* PETALS */
+.petal{position:absolute;top:-90px;display:grid;place-items:center;animation:fall linear forwards;z-index:5;cursor:pointer;will-change:transform}
+.pi{display:block;width:var(--s);height:var(--s);pointer-events:none;animation:tumble var(--td) ease-in-out infinite alternate;opacity:var(--o,1)}
+.pi img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none}
+.pi.fb{width:calc(var(--s)*.6);height:calc(var(--s)*.85);border-radius:70% 0 70% 0;background:var(--pink);box-shadow:0 0 10px rgba(227,132,150,.6)}
+@keyframes fall{0%{transform:translate3d(0,0,0) rotate(0)}50%{transform:translate3d(var(--dx2),58dvh,0) rotate(calc(var(--spin)*.5))}100%{transform:translate3d(var(--dx),122dvh,0) rotate(var(--spin))}}
+@keyframes tumble{from{transform:perspective(420px) scaleX(var(--fl)) rotate(var(--r0)) rotateX(0) rotateY(0) translateX(calc(var(--sw)*-1))}to{transform:perspective(420px) scaleX(var(--fl)) rotate(var(--r1)) rotateX(var(--rx)) rotateY(var(--ry)) translateX(var(--sw))}}
+#pop{position:absolute;inset:0;z-index:40;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .5s}
+#pop.show{opacity:1;pointer-events:auto}
+#pop .card{width:84%}
+#pop .row{margin-top:.7rem;color:var(--forest);font-size:.95rem}
+#pop .row b{display:block;font-weight:500;letter-spacing:.25em;font-size:.7rem;text-transform:uppercase;color:var(--sage)}
+#pop .note{margin-top:1.1rem;font-family:var(--fd);font-style:italic;font-size:1.15rem;color:var(--forest)}
+
+/* FINAL */
+#final{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+#final .lg{width:34%;margin-bottom:1.6rem}
+#final h1{font-family:var(--fd);font-weight:600;font-size:clamp(2.4rem,11vw,3.4rem);line-height:1.05;color:var(--pink)}
+#final .gn{margin-top:1.4rem;font-family:var(--fd);font-style:italic;font-size:1.7rem;color:var(--forest)}
+#final .cp{margin-top:1rem;letter-spacing:.35em;text-transform:uppercase;font-size:.78rem;color:var(--sage)}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div id="logo">
+    <div id="logoBox" class="fx" style="--d:.2s">
+      <img id="logoImg" alt="Logo">
+      <div class="mono" id="mono">A <span>∞</span> M<small>WEDDING</small></div>
+    </div>
+    <div id="hint"><span class="fx" style="--d:1s;display:inline-block">Trace ∞ on the logo</span></div>
+  </div>
+  <div id="nameModal"><div class="card">
+    <h2 class="fx u" style="--d:.3s">Welcome</h2><p class="fx l" style="--d:.5s">Please enter your name</p>
+    <input class="fx r" style="--d:.7s" id="nameIn" placeholder="Your name" autocomplete="off" maxlength="40">
+    <button class="btn fx u" style="--d:.9s" id="enterBtn">Enter</button>
+  </div></div>
+  <div id="app"></div>
+  <div id="pop"><div class="card" id="popCard"></div></div>
+</div>
+<canvas id="dust"></canvas>
+
+<script>
+/* ================= EDIT THIS SECTION ================= */
+const CONFIG={
+  couple:"Aarav & Meera",
+  logo:"assets/logo.png",
+  ganpati:"assets/ganpati.png",      // transparent PNG
+  hibiscus:"assets/hibiscus.png",    // transparent PNG
+  petal:"assets/petal.png",          // transparent PNG
+  drawTree:true,                     // false if your Main BG already has a tree
+  flowerPos:[[15,46],[85,30],[27,17]], // % positions of the 3 hibiscus on page 1 (inside the tree box)
+  bg:{main:"assets/bg-main.jpg",puja:"assets/bg-puja.jpg",mehendi:"assets/bg-mehendi.jpg",sangeet:"assets/bg-sangeet.jpg",haldi:"assets/bg-haldi.jpg",wedding:"assets/bg-wedding.jpg"}
+};
+// Page order: Main → Puja → Mehendi → Sangeet → Haldi → Wedding (petals) → Thank-you
+const ORDER=["mehendi","sangeet","haldi","wedding"];
+const EVENTS={
+  puja:{title:"Ganpati Puja",date:"Thursday, 11 February",time:"6:00 PM",venue:"Family Residence, Bandra, Mumbai",dress:"Traditional, pastel tones",note:"Seeking Bappa's blessings to begin",map:""},
+  mehendi:{title:"Mehendi",date:"Friday, 12 February",time:"4:00 PM onwards",venue:"The Garden Lawn, Mumbai",dress:"Bright & festive",note:"Henna, chai & music",map:""},
+  sangeet:{title:"Sangeet",date:"Friday, 12 February",time:"8:00 PM",venue:"The Grand Ballroom, Mumbai",dress:"Indo-western glam",note:"An evening of dance & dhol",map:""},
+  haldi:{title:"Haldi",date:"Saturday, 13 February",time:"10:00 AM",venue:"Courtyard, Family Residence",dress:"Yellow & florals",note:"Come dressed in yellow",map:""},
+  wedding:{title:"Wedding",date:"Sunday, 14 February",time:"11:00 AM",venue:"Palm Grove Banquet, Mumbai",dress:"Traditional Indian",note:"Join us as we begin forever",map:""}
+};
+// Name (first name, lowercase) → events invited to. Wedding is always shown.
+const GUESTS={
+  "priya":["puja","mehendi","sangeet","haldi","wedding"],
+  "rahul":["puja","sangeet","wedding"],
+  "anita":["mehendi","haldi","wedding"]
+};
+const DEFAULT_GUEST=["puja","sangeet","wedding"];
+/* ===================================================== */
+
+const $=s=>document.querySelector(s),rnd=(a,b)=>a+Math.random()*(b-a);
+let stage='logo',cur=0,guest='',popOpen=false,locked=false,filled=false,evIdx=0,scenes=[],PETAL=0,FINAL=0,ps=null,popList=[];
+
+/* ---- pixie dust ---- */
+const cv=$('#dust'),cx=cv.getContext('2d');let P=[],dpr=Math.min(devicePixelRatio||1,2);
+function rs(){cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}rs();addEventListener('resize',rs);
+function dust(x,y,o={}){const n=o.n||3;for(let i=0;i<n;i++)P.push({x:x+rnd(-3,3),y:y+rnd(-3,3),vx:rnd(-.3,.3)*(o.spread||1),vy:rnd(-.35,.15)*(o.spread||1),l:0,m:o.tiny?rnd(55,120):rnd(40,85),s:o.tiny?rnd(.6,1.7):rnd(1.2,2.8),a:o.faint?.38:1,ph:rnd(0,6)})}
+function burst(x,y,n=50,o={}){dust(x,y,{...o,n,spread:o.spread||4})}
+(function loop(){cx.clearRect(0,0,innerWidth,innerHeight);
+  for(let i=P.length-1;i>=0;i--){const p=P[i];p.l++;if(p.l>p.m){P.splice(i,1);continue}
+    p.x+=p.vx;p.y+=p.vy+.04;p.vx*=.985;const t=p.l/p.m;
+    let al=p.a*(t<.5?1:1-(t-.5)*1.7)*(.65+.35*Math.sin(p.l*.4+p.ph)),r=p.s*(1-t*.6);
+    cx.globalAlpha=Math.max(al,0);cx.fillStyle=t>.55?'#FFE9A8':'#E8B84A';cx.shadowColor='#E8B84A';cx.shadowBlur=t>.55?3:10;
+    cx.beginPath();cx.arc(p.x,p.y,Math.max(r,.4),0,6.283);cx.fill()}
+  cx.globalAlpha=1;requestAnimationFrame(loop)})();
+
+/* ---- infinity gesture ---- */
+let pts=[],drawing=false;
+function isInfinity(){
+  if(pts.length<25)return false;
+  const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),w=x1-x0,h=y1-y0;
+  if(w<110||h<w*.18||h>w*.95)return false;
+  const b=$('#logoBox').getBoundingClientRect(),mx=(x0+x1)/2,my=(y0+y1)/2;
+  if(mx<b.left-70||mx>b.right+70||my<b.top-70||my>b.bottom+70)return false;
+  let L=0,R=0;
+  for(let i=1;i<pts.length-1;i++){
+    const a={x:pts[i].x-pts[i-1].x,y:pts[i].y-pts[i-1].y},c={x:pts[i+1].x-pts[i].x,y:pts[i+1].y-pts[i].y};
+    const ang=Math.atan2(a.x*c.y-a.y*c.x,a.x*c.x+a.y*c.y);
+    if(pts[i].x<mx)L+=ang;else R+=ang}
+  return Math.abs(L)>2.2&&Math.abs(R)>2.2&&L*R<0;
+}
+function infinityDone(){
+  stage='name';drawing=false;
+  pts.forEach((p,i)=>{if(i%2==0)setTimeout(()=>dust(p.x,p.y,{n:3,spread:2}),i*6)});
+  setTimeout(()=>{$('#nameModal').classList.add('show');$('#nameIn').focus({preventScroll:true})},950);
+}
+
+/* ---- builders ---- */
+const FSVG=`<svg viewBox="-22 -22 44 44">${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="-9" rx="7.5" ry="11" fill="#E38496" stroke="#fff" stroke-width=".7" transform="rotate(${a})"/>`).join('')}<circle r="4.2" fill="#fff" opacity=".9"/><path d="M0 0L8-13" stroke="#B2AF87" stroke-width="1.3"/><circle cx="8" cy="-13" r="2" fill="#B2AF87"/></svg>`;
+const hibImg=`<img src="${CONFIG.hibiscus}" draggable="false" alt="" onerror="this.outerHTML=FSVG">`;
+const treeSVG=`<svg class="t" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet"><g fill="none" stroke="#617764" stroke-linecap="round"><path d="M100 300C100 230 90 190 98 140 104 100 96 70 100 40" stroke-width="13"/><path d="M99 205C70 185 50 172 30 140" stroke-width="7"/><path d="M100 160C130 142 150 120 170 90" stroke-width="7"/><path d="M98 112C80 92 70 72 55 50" stroke-width="6"/></g><g fill="#1A3D28" opacity=".92"><circle cx="30" cy="135" r="22"/><circle cx="170" cy="85" r="24"/><circle cx="55" cy="45" r="22"/><circle cx="100" cy="30" r="26"/><circle cx="135" cy="125" r="18"/><circle cx="70" cy="160" r="18"/></g><g fill="#617764" opacity=".85"><circle cx="40" cy="125" r="14"/><circle cx="160" cy="75" r="15"/><circle cx="68" cy="38" r="13"/><circle cx="112" cy="22" r="14"/></g></svg>`;
+const mapUrl=e=>e.map||'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.venue);
+const mapLink=(e,d)=>`<a class="maplink fx" style="--d:${d}s" href="${mapUrl(e)}" target="_blank" rel="noopener">Find on map ↗</a>`;
+function evHTML(k,invited){
+  if(k==='puja'&&!invited)return `<div class="tg fx" style="--d:.7s">With blessings</div><h2 class="fx l" style="--d:.9s">Ganpati Bappa Morya</h2>`;
+  const e=EVENTS[k];
+  return `<div class="tg fx" style="--d:.7s">You're invited to</div><h2 class="fx l" style="--d:.9s">${e.title}</h2><p class="fx r" style="--d:1.1s">${e.date}</p><p class="fx l" style="--d:1.3s">${e.time}</p><p class="fx r" style="--d:1.5s">${e.venue}</p>${mapLink(e,1.8)}`}
+
+function build(){
+  app.innerHTML='';scenes=[];filled=false;locked=false;evIdx=0;
+  const inv=new Set(GUESTS[guest.toLowerCase().split(/\s+/)[0]]||DEFAULT_GUEST);
+  const evs=ORDER.filter(k=>inv.has(k)||k==='wedding');
+  popList=(inv.has('puja')?['puja']:[]).concat(evs);
+  const pages=['main','puja',...evs];PETAL=pages.length-1;FINAL=pages.length;
+  pages.forEach((k,i)=>{
+    const src=CONFIG.bg[k],s=document.createElement('div');s.className='scene';s.id='s'+i;
+    s.innerHTML=`<div class="ph">Add<br>${src}</div><img class="bg" src="${src}" alt="" onerror="this.style.display='none'">`;
+    if(k==='main')s.insertAdjacentHTML('beforeend',`<div id="hintG">Offer a hibiscus to Ganpati ji</div><div id="drop"></div><div class="tree">${CONFIG.drawTree?treeSVG:''}${CONFIG.flowerPos.map(([l,t])=>`<div class="flower" style="left:${l}%;top:${t}%">${hibImg}</div>`).join('')}</div>`);
+    if(k==='puja')s.insertAdjacentHTML('beforeend',`<div class="sit"><img class="gan" src="${CONFIG.ganpati}" draggable="false" alt="" onerror="this.style.display='none'"><div class="hib">${hibImg}</div></div>`);
+    if(i>0&&i!==PETAL)s.insertAdjacentHTML('beforeend',`<div class="ev-over">${evHTML(k,inv.has(k))}</div>`);
+    app.appendChild(s);scenes.push(s)});
+  const fin=document.createElement('div');fin.className='scene';fin.id='final';
+  fin.innerHTML=`<img class="lg fx" style="--d:.5s" src="${CONFIG.logo}" alt="" onerror="this.style.display='none'"><h1><span class="fx l" style="--d:.9s;display:block">Looking forward</span><span class="fx r" style="--d:1.2s;display:block">to seeing you</span></h1><div class="gn fx" style="--d:1.7s">${guest.replace(/</g,'&lt;')}</div><div class="cp fx" style="--d:2s">${CONFIG.couple}</div>`;
+  app.appendChild(fin);scenes.push(fin);ps=scenes[PETAL];
+  scenes[0].querySelectorAll('.flower').forEach(wireFlower);
+}
+function show(i){cur=i;if(i===PETAL&&!filled){filled=true;for(let k=0;k<14;k++)makePetal(true)}
+  scenes.forEach((s,j)=>{s.className='scene'+(j<i?' past':j==i?' active':'')+(j===PETAL&&popOpen?' dim':'')})}
+function go(i){if(i<0||i>FINAL||popOpen)return;
+  if(i===0){locked=false;scenes[0].querySelectorAll('.flower').forEach(f=>{f.style.transform='';f.style.opacity=1})}
+  show(i)}
+
+/* ---- logo / name ---- */
+const app=$('#app'),li=$('#logoImg');li.src=CONFIG.logo;li.onerror=()=>{li.style.display='none';$('#mono').style.display='block'};
+function submitName(){
+  const v=$('#nameIn').value.trim();if(!v){const c=$('#nameModal .card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');return}
+  guest=v;$('#nameIn').blur();build();
+  $('#nameModal').classList.remove('show');$('#logo').classList.add('gone');
+  stage='scenes';app.classList.add('on');show(0);
+}
+$('#enterBtn').onclick=submitName;
+$('#nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')submitName()});
+['pointerdown','pointerup'].forEach(ev=>$('#nameModal').addEventListener(ev,e=>e.stopPropagation()));
+
+/* ---- flower drag (page 1) ---- */
+function wireFlower(f){
+  let sx,sy,tx=0,ty=0;const T=sc=>`translate(calc(-50% + ${tx}px),calc(-50% + ${ty}px)) scale(${sc})`;
+  f.addEventListener('pointerdown',e=>{if(locked)return;e.stopPropagation();f.setPointerCapture(e.pointerId);sx=e.clientX;sy=e.clientY;f.classList.add('drag')});
+  f.addEventListener('pointermove',e=>{if(!f.classList.contains('drag'))return;tx=e.clientX-sx;ty=e.clientY-sy;f.style.transform=T(1.25);dust(e.clientX,e.clientY,{n:2,faint:true})});
+  f.addEventListener('pointerup',e=>{e.stopPropagation();if(!f.classList.contains('drag'))return;f.classList.remove('drag');
+    const d=$('#drop').getBoundingClientRect(),dx=d.left+d.width/2,dy=d.top+d.height/2;
+    if(Math.hypot(e.clientX-dx,e.clientY-dy)<d.width*.8&&!locked){
+      locked=true;const r=f.getBoundingClientRect();tx+=dx-(r.left+r.width/2);ty+=dy-(r.top+r.height/2);f.style.transform=T(1);
+      burst(dx,dy,90,{spread:5});setTimeout(()=>{f.style.opacity=0;go(1)},750)}
+    else{tx=ty=0;f.style.transform=''}});
+}
+
+/* ---- petals ---- */
+function makePetal(pre){
+  const dur=rnd(9,17),sz=rnd(34,72),hit=Math.max(sz+40,84),p=document.createElement('div'),pi=document.createElement('span');
+  p.className='petal';p.style.cssText=`width:${hit}px;height:${hit}px;left:calc(${rnd(-4,96)}% - ${hit/2}px);animation-duration:${dur}s;animation-delay:${pre?-rnd(0,dur*.9).toFixed(2):0}s;--dx:${rnd(-140,140)}px;--dx2:${rnd(-110,110)}px;--spin:${rnd(-540,540)}deg`;
+  pi.className='pi';pi.style.cssText=`--s:${sz}px;--td:${rnd(2.4,5)}s;--sw:${rnd(8,30)}px;--r0:${rnd(-70,0)}deg;--r1:${rnd(0,70)}deg;--rx:${rnd(-75,75)}deg;--ry:${rnd(-75,75)}deg;--fl:${Math.random()<.5?-1:1};--o:${rnd(.82,1).toFixed(2)}`;
+  const im=new Image();im.src=CONFIG.petal;im.draggable=false;im.alt='';im.onerror=()=>{im.remove();pi.classList.add('fb')};pi.appendChild(im);p.appendChild(pi);
+  p.addEventListener('animationend',e=>{if(e.target===p)p.remove()});
+  p.addEventListener('pointerdown',e=>e.stopPropagation());
+  p.addEventListener('pointerup',e=>{e.stopPropagation();const r=p.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,22,{spread:2.5});p.remove();openPop()});
+  ps.appendChild(p)}
+function spawnPetal(){if(ps&&cur===PETAL&&!popOpen&&ps.querySelectorAll('.petal').length<20)makePetal(false);setTimeout(spawnPetal,rnd(450,1000))}
+spawnPetal();
+function openPop(){
+  const e=EVENTS[popList[evIdx++%popList.length]];
+  $('#popCard').innerHTML=`<h2 class="fx u" style="--d:.1s">${e.title}</h2><div class="row fx l" style="--d:.25s"><b>Date</b>${e.date}</div><div class="row fx r" style="--d:.4s"><b>Time</b>${e.time}</div><div class="row fx l" style="--d:.55s"><b>Venue</b>${e.venue}</div><div class="row fx r" style="--d:.7s"><b>Dress code</b>${e.dress}</div><div class="note fx u" style="--d:.9s">${e.note}</div>${mapLink(e,1.1)}`;
+  popOpen=true;$('#pop').classList.add('show');ps.classList.add('dim');
+}
+function closePop(){popOpen=false;$('#pop').classList.remove('show');ps&&ps.classList.remove('dim')}
+
+/* ---- global pointer handling ---- */
+let down=null;
+addEventListener('pointerdown',e=>{
+  down={x:e.clientX,y:e.clientY};
+  if(stage==='logo'){drawing=true;pts=[{x:e.clientX,y:e.clientY}];dust(e.clientX,e.clientY,{n:4,tiny:true})}
+});
+addEventListener('pointermove',e=>{
+  if(stage==='logo'&&drawing){
+    const l=pts[pts.length-1];if(Math.hypot(e.clientX-l.x,e.clientY-l.y)>=6){pts.push({x:e.clientX,y:e.clientY});
+      if(pts.length%6===0&&isInfinity()){infinityDone();return}}
+    dust(e.clientX,e.clientY,{n:2,tiny:true,spread:.6});
+  }else if(stage==='scenes'&&(e.buttons||e.pointerType==='mouse')&&!e.target.closest('.flower'))dust(e.clientX,e.clientY,{n:1,faint:true,spread:.7});
+});
+addEventListener('pointerup',e=>{
+  if(stage==='logo'){drawing=false;burst(e.clientX,e.clientY,10,{tiny:true,spread:1.5});if(isInfinity())infinityDone();pts=[];return}
+  if(stage!=='scenes'||!down)return;
+  const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y);down=null;
+  if(moved>12||e.target.closest('.flower,.petal,#nameModal,a'))return;
+  if(popOpen){closePop();return}
+  const r=$('.frame').getBoundingClientRect();
+  if((e.clientX-r.left)/r.width<.25){dust(e.clientX,e.clientY,{n:16,faint:true,spread:2.5});go(cur-1);return}
+  if(cur>=1&&cur<PETAL)go(cur+1);
+  else if(cur===PETAL)go(FINAL);
+});
+</script>
+</body>
+</html>
