@@ -164,20 +164,13 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 const CONFIG={
   couple:"Samidha & Rahil",
   logo:"assets/logo.png",
-  ganpati:"assets/ganpati.png",       // Updated from "assets/ganpati.png"
-  tree:"assets/Ganpati%20Tree.png",  // URL-encoded space for asset path
-  hibiscus:"assets/hibiscus.png",
-  petal:"assets/petal.png",
-  drawTree:true,
-  flowerPos:[[15,46],[85,30],[27,17]],
-  bg:{
-    main:"assets/bg-main.jpg",
-    puja:"assets/bg-puja.jpg",
-    mehendi:"assets/bg-mehendi.jpg",
-    sangeet:"assets/bg-sangeet.jpg",
-    haldi:"assets/bg-haldi.jpg",
-    wedding:"assets/bg-wedding.jpg"
-  }
+  ganpati:"assets/ganpati.png",      // transparent PNG
+  tree:"assets/Ganpati%20Tree.png", // user-provided tree artwork; SVG fallback if it is missing
+  hibiscus:"assets/hibiscus.png",    // transparent PNG
+  petal:"assets/petal.png",          // transparent PNG
+  drawTree:true,                     // false if your Main BG already has a tree
+  flowerPos:[[15,46],[85,30],[27,17]], // % positions of the 3 hibiscus on page 1 (inside the tree box)
+  bg:{main:"assets/bg-main.jpg",puja:"assets/bg-puja.jpg",mehendi:"assets/bg-mehendi.jpg",sangeet:"assets/bg-sangeet.jpg",haldi:"assets/bg-haldi.jpg",wedding:"assets/bg-wedding.jpg"}
 };
 // Page order: Main → Puja → Mehendi → Sagai → Haldi → Wedding (petals) → Thank-you
 const ORDER=["mehendi","sangeet","haldi","wedding"]; // sangeet event is the Sagai page
