@@ -187,7 +187,7 @@ const GUESTS={
   "rahul":["puja","sangeet","wedding"],
   "anita":["mehendi","haldi","wedding"]
 };
-const DEFAULT_GUEST=["puja","sangeet","wedding"];
+const DEFAULT_GUEST=["puja","mehendi","sangeet","haldi","wedding"];
 /* ===================================================== */
 
 const $=s=>document.querySelector(s),rnd=(a,b)=>a+Math.random()*(b-a);
@@ -257,7 +257,7 @@ function build(){
     }
     if(k==='main')s.insertAdjacentHTML('beforeend',`<div class="intro fx" style="--d:.4s"><div class="eyebrow">A blessing before the celebrations</div><h1>With love, devotion &amp; new beginnings</h1><p class="intro-copy"><!-- Replace this paragraph with the introduction text you will provide. --></p></div><div id="hintG">Offer Bappa a flower</div><div id="drop" aria-label="Flower offering space"></div><div class="main-bappa"><div class="image-fallback" data-gan-fallback hidden>Ganpati image could not be loaded<br><small>${CONFIG.ganpati}</small></div><img class="gan" data-gan-image src="${CONFIG.ganpati}" draggable="false" alt="Ganpati Bappa"></div><div class="tree-art">${CONFIG.tree ? `<img data-tree-image src="${CONFIG.tree}" alt="Wedding invitation tree">` : (CONFIG.drawTree?treeSVG:'')}${CONFIG.flowerPos.map(([l,t])=>`<div class="flower" style="left:${l}%;top:${t}%">${hibImg}</div>`).join('')}</div>`);
     if(k==='puja')s.insertAdjacentHTML('beforeend',`<div class="sit"><div class="image-fallback" data-gan-fallback hidden>Ganpati image could not be loaded<br><small>${CONFIG.ganpati}</small></div><img class="gan" data-gan-image src="${CONFIG.ganpati}" draggable="false" alt="Ganpati Bappa"><div class="hib">${hibImg}</div></div>`);
-    if(i>0){ if(k==='wedding'){ s.insertAdjacentHTML('beforeend', '<div class="petal-hint">Catch a drifting petal, and let it unfold the details of our wedding day.</div>'); } else { s.insertAdjacentHTML('beforeend', `<div class="ev-over">${evHTML(k,inv.has(k))}</div><button class="next-cue" type="button" aria-label="Tap to continue"><span class="pixie-orbit"></span><span class="next-cue-label">Tap to continue</span></button>`); } }
+    if(i>0){ if(k==='wedding'){ s.insertAdjacentHTML('beforeend', '<div class="petal-hint">Catch a falling petal</div>'); } else { s.insertAdjacentHTML('beforeend', `<div class="ev-over">${evHTML(k,inv.has(k))}</div><button class="next-cue" type="button" aria-label="Tap to continue"><span class="pixie-orbit"></span><span class="next-cue-label">Tap to continue</span></button>`); } }
     app.appendChild(s);scenes.push(s)});
   const fin=document.createElement('div');fin.className='scene';fin.id='final';
   fin.innerHTML=`<img class="lg fx" style="--d:.5s" src="${CONFIG.logo}" alt="" onerror="this.style.display='none'"><h1><span class="fx l" style="--d:.9s;display:block">Looking forward</span><span class="fx r" style="--d:1.2s;display:block">to seeing you</span></h1><div class="gn fx" style="--d:1.7s">${guest.replace(/</g,'&lt;')}</div><div class="cp fx" style="--d:2s">${CONFIG.couple}</div>`;
