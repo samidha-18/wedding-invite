@@ -213,7 +213,7 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 #final .cp{margin-top:1rem;letter-spacing:.12em;text-transform:none;font-family:var(--f-names);font-size:1.15rem;color:var(--sage)}
 /* Wedding petal prompt: centred, much larger, never fades away */
 #app .petal-hint{
-  top:50%;
+  top:30%;
   bottom:auto;
   left:5%;
   right:5%;
@@ -315,6 +315,43 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 #nameModal .card input::placeholder{font-family:'BodoniVenue',serif}
 #nameModal .btn{font-family:'CinzelInvite',serif;font-weight:400;letter-spacing:.28em}
 #nameModal #guestError{font-family:'BodoniVenue',serif}
+/* 1: "Offer Bappa a flower" bigger and more evident, same place */
+#hintG{
+  font-size:clamp(1.35rem,5.6vw,1.75rem);
+  letter-spacing:.08em;
+  white-space:nowrap;
+  text-shadow:0 0 6px rgba(255,255,255,1),0 0 14px rgba(227,132,150,.95),0 0 28px rgba(227,132,150,.7),0 0 42px rgba(227,132,150,.4);
+}
+
+/* 2: hibiscus sits over the bottom centre of Ganpati on the Puja page */
+.bappa-flower{bottom:3%;width:72px;height:72px;transform:translateX(-50%)}
+
+/* 3: subtle shadow on event details */
+.ev-over{text-shadow:0 1px 5px rgba(26,61,40,.3)}
+
+/* 4: Puja page details + map in sage */
+.scene[data-event="puja"] .ev-over p,
+.scene[data-event="puja"] .ev-over .maplink{color:var(--sage);text-shadow:0 1px 4px rgba(249,237,213,.55)}
+
+/* 5: Puja background: top of the image touches the top of the frame */
+.scene[data-event="puja"] img.bg{object-position:center top}
+
+/* 6: Wedding event name (the one in the petal pop-up card) slightly bigger */
+#popCard h2{font-size:2.7rem;line-height:1.05;overflow-wrap:anywhere}
+
+/* All prompts: Cinzel with extra weight */
+#hint,#hint span,
+#hintG,
+.petal-hint,.petal-hint .hint-text,
+.next-cue-label{
+  font-family:'CinzelInvite',serif !important;
+  -webkit-text-stroke:.6px currentColor;
+}
+
+/* Cinzel is wider than the old font, so keep the prompts from overflowing */
+#hintG{font-size:clamp(1.2rem,5vw,1.6rem)}
+#app .petal-hint{font-size:2.1rem}
+  
 </style>
 </head>
 <body>
