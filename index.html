@@ -113,7 +113,14 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 /* EVENT DETAILS OVER IMAGE */
 .ev-over{position:absolute;left:0;right:0;bottom:0;padding:5rem 1.5rem 2.6rem;text-align:center;background:rgba(26,61,40,.82);z-index:3;pointer-events:none}
 .ev-over .tg{font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--white)}
-.ev-over h2{font-family:var(--f-names);font-weight:400;font-size:5.4rem;line-height:1.1;color:var(--pink);margin:.2rem 0 .5rem}
+.ev-over h2{
+  font-family:var(--f-names);
+  font-weight:400;
+  font-size:4rem;
+  line-height:1.1;
+  color:var(--pink);
+  margin:.2rem 0 .5rem;
+}
 .ev-over p{color:var(--white);font-size:1rem;margin:.18rem 0}.ev-over .date-time{font-family:var(--f-date)}.ev-over .venue-row{font-family:var(--f-venue)}.host-names{font-family:var(--f-date)}
 .maplink{display:inline-block;margin-top:.9rem;padding:.55rem 1.3rem;border:1px solid currentColor;border-radius:999px;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;pointer-events:auto;cursor:pointer}
 .ev-over .maplink{color:var(--white)}#pop .maplink{color:var(--pink)}#popCard .date-time{font-family:var(--f-date)}#popCard .venue-row{font-family:var(--f-venue)}#popCard .host-names{font-family:var(--f-date)}#popCard h2{font-family:var(--f-names)}
@@ -175,11 +182,11 @@ const CONFIG={
 // Page order: Main → Puja → Mehendi → Sagai → Haldi → Wedding (petals) → Thank-you
 const ORDER=["mehendi","sangeet","haldi","wedding"]; // sangeet event is the Sagai page
 const EVENTS={
-  puja:{title:"Grahamak & Mandap Mahurat",date:"Wednesday, 09th December",time:"9:00 AM onwards",venue:"Family Residence, Mumbai",map:""},
-  mehendi:{title:"Mehendi te Vaavi",date:"Friday, 10th December",time:"5:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
-  sangeet:{title:"Sagai & Shor Sharaba",date:"Friday, 11th December",time:"7:00 PM onwards",venue:"Embassy Hall, The Tunga Paradise, Andheri E, Mumbai",map:""},
-  haldi:{title:"Prem Pithi",date:"Saturday, 12th December",time:"05:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
-  wedding:{title:"Mangal Pheras",date:"Sunday, 13th December",time:"Jaan Agaman: 10:30 AM & Hasta Melap: 12:30 PM",venue:"Grande Hall C, NESCO, Goregaon E, Mumbai", note:"Join us as we begin forever",map:""}
+  puja:{title:"Grahamak & Mandap Mahurat",date:"wednesday, 09th december 2026",time:"9:00 AM onwards",venue:"Family Residence, Mumbai",map:""},
+  mehendi:{title:"Mehendi te Vaavi",date:"thursday, 10th december 2026",time:"5:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
+  sangeet:{title:"Sagai & Shor Sharaba",date:"friday, 11th december 2026",time:"7:00 PM onwards",venue:"Embassy Hall, The Tunga Paradise, Andheri E, Mumbai",map:""},
+  haldi:{title:"Prem Pithi",date:"saturday, 12th december 2026",time:"05:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
+  wedding:{title:"Mangal Pheras",date:"sunday, 13th december 2026",time:"Jaan Agaman: 10:30 AM & Hasta Melap: 12:30 PM",venue:"Grande Hall C, NESCO, Goregaon E, Mumbai", note:"Join us as we begin forever",map:""}
 };
 // Name (first name, lowercase) → events invited to. Wedding is always shown.
 const GUESTS={
