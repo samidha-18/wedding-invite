@@ -215,7 +215,7 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 /* FINAL */
 #final{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
 #final .lg{width:34%;margin-top:2rem;margin-bottom:0} .final-greeting{   font-family:var(--fd);   font-weight:400;   font-size:clamp(1.8rem,7vw,2.6rem);   line-height:1.2;   color:var(--pink);   margin-bottom:1.3rem; }
-#final h1{font-family:var(--fd);font-weight:500;font-size:clamp(2.4rem,11vw,3.4rem);line-height:1.05;color:var(--pink)}
+#final h1{   font-family:var(--fd);   font-weight:600;   font-size:clamp(4.8rem,22vw,6.8rem);   line-height:1.02;   color:var(--pink);   text-wrap:balance; }
 #final .gn{margin-top:1.4rem;font-family:var(--fd);font-style:italic;font-size:1.7rem;color:var(--forest)}
 #final .cp{margin-top:1rem;letter-spacing:.12em;text-transform:none;font-family:var(--f-names);font-size:1.15rem;color:var(--sage)}
 /* Wedding petal prompt: centred, much larger, never fades away */
@@ -267,6 +267,35 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 #final .cp{
   font-size:2.3rem;
 }
+/* Final responsive overrides */
+@media(max-width:600px){
+  .ev-over{
+    padding:3.5rem .8rem 2.2rem;
+  }
+  .ev-over h2{
+    font-size:6.5rem !important;
+    line-height:.95;
+    font-weight:400;
+    overflow-wrap:anywhere;
+    max-width:100%;
+  }
+}
+#final .lg{
+  width:34%;
+  transition:transform .9s ease,opacity .9s ease;
+}
+.logo-return{
+  position:fixed;
+  z-index:200;
+  object-fit:contain;
+  pointer-events:none;
+  transition:
+    left .9s cubic-bezier(.2,.8,.2,1),
+    top .9s cubic-bezier(.2,.8,.2,1),
+    width .9s cubic-bezier(.2,.8,.2,1),
+    height .9s cubic-bezier(.2,.8,.2,1),
+    opacity .5s ease;
+}
 </style>
 </head>
 <body>
@@ -298,7 +327,7 @@ const CONFIG={
   hibiscus:"assets/hibiscus.png",    // transparent PNG
   petal:"assets/petal.png",          // transparent PNG
   drawTree:true,                     // false if your Main BG already has a tree
-  flowerPos:[[15,46],[85,30],[27,17]], // % positions of the 3 hibiscus on page 1 (inside the tree box)
+  flowerPos:[[18,76],[56,64],[82,79]], // three hibiscus positioned lower in the tree
   bg:{main:"assets/bg-main.jpg",puja:"assets/bg-puja.jpg",mehendi:"assets/bg-mehendi.jpg",sangeet:"assets/bg-sangeet.jpg",haldi:"assets/bg-haldi.jpg",wedding:"assets/bg-wedding.jpg"}
 };
 // Page order: Main → Puja → Mehendi → Sagai → Haldi → Wedding (petals) → Thank-you
@@ -375,13 +404,13 @@ function build(){
   const pages=['main','puja',...evs];PETAL=pages.length-1;FINAL=pages.length;
   pages.forEach((k,i)=>{
     const src=CONFIG.bg[k] || '';
-    const s=document.createElement('div');s.className='scene';s.id='s'+i;
+    const s=document.createElement('div');     s.className='scene';     s.id='s'+i;     s.dataset.event=k;
     s.innerHTML=`<div class="ph" data-bg-fallback hidden>Background image could not be loaded<br><small>${src || 'No background path configured for '+k}</small></div><img class="bg" data-bg-image src="${src}" alt="" aria-hidden="true">`;
     const bg=s.querySelector('[data-bg-image]'), bgFallback=s.querySelector('[data-bg-fallback]');
     if(!src){bgFallback.hidden=false;bg.remove();}
     else {
       bg.addEventListener('load',()=>{bgFallback.hidden=true;});
-      bg.addEventListener('error',()=>{bgFallback.hidden=false;bgFallback.innerHTML=`Background image could not be loaded<br><small>${src}</small><br><small>Check the filename, capitalization and assets folder.</small>`;console.error('Background image failed to load:',src);});
+      bg.addEventListener('error',()=>{         bgFallback.hidden=false;         bgFallback.innerHTML=           `Background image could not be loaded<br>           <small>Path: ${src}</small><br>           <small>Resolved URL: ${bg.src}</small><br>           <small>Check the browser Console and Network tabs for the exact error.</small>`;         console.error('Background image failed:',{           path:src,           resolvedURL:bg.src         });       });
       if(bg.complete){if(bg.naturalWidth>0)bgFallback.hidden=true;else {bgFallback.hidden=false;}}
     }
     if(k==='main')s.insertAdjacentHTML('beforeend',`<div class="intro fx" style="--d:.4s"><div class="eyebrow">A blessing before the celebrations</div><h1>With love, devotion &amp; new beginnings</h1><p class="intro-copy"><!-- Replace this paragraph with the introduction text you will provide. --></p></div><div id="hintG">Offer Bappa a flower</div><div id="drop" aria-label="Flower offering space"></div><div class="main-bappa"><div class="image-fallback" data-gan-fallback hidden>Ganpati image could not be loaded<br><small>${CONFIG.ganpati}</small></div><img class="gan" data-gan-image src="${CONFIG.ganpati}" draggable="false" alt="Ganpati Bappa"></div><div class="tree-art">${CONFIG.tree ? `<img data-tree-image src="${CONFIG.tree}" alt="Wedding invitation tree">` : (CONFIG.drawTree?treeSVG:'')}${CONFIG.flowerPos.map(([l,t])=>`<div class="flower" style="left:${l}%;top:${t}%">${hibImg}</div>`).join('')}</div>`);
@@ -397,7 +426,7 @@ function build(){
     const gan=scene.querySelector('[data-gan-image]');
     if(gan){const fallback=scene.querySelector('[data-gan-fallback]');
       const ok=()=>{if(gan.naturalWidth>0)fallback.hidden=true;};
-      const fail=()=>{fallback.hidden=false;console.error('Ganpati image failed to load:',CONFIG.ganpati);};
+      const fail=()=>{         fallback.hidden=false;         fallback.innerHTML=           `Ganpati image could not be loaded<br>           <small>Path: ${CONFIG.ganpati}</small><br>           <small>Resolved URL: ${gan.src}</small>`;         console.error('Ganpati image failed:',{           path:CONFIG.ganpati,           resolvedURL:gan.src,           complete:gan.complete,           naturalWidth:gan.naturalWidth,           naturalHeight:gan.naturalHeight         });       };
       gan.addEventListener('load',ok);gan.addEventListener('error',fail);
       if(gan.complete){if(gan.naturalWidth>0)fallback.hidden=true;else fail();}
     }
@@ -410,6 +439,24 @@ function show(i){
   if(i===PETAL&&!filled){
     filled=true;
     for(let k=0;k<14;k++)makePetal(true);
+  }
+
+  if(ps&&ps._hintTimer){
+    clearTimeout(ps._hintTimer);
+    ps._hintTimer=null;
+  }
+
+  if(i===PETAL&&ps){
+    const hint=ps.querySelector('.petal-hint');
+    if(hint){
+      hint.classList.remove('show');
+      ps._hintTimer=setTimeout(()=>{
+        if(cur===PETAL&&!popOpen){
+          hint.classList.add('show');
+        }
+        ps._hintTimer=null;
+      },5000);
+    }
   }
   if(ps&&ps._hintTimer){
     clearTimeout(ps._hintTimer);
@@ -531,7 +578,54 @@ function openPop(){
 }
 function closePop(){popOpen=false;$('#pop').classList.remove('show');ps&&ps.classList.remove('dim')}
 
-/* ---- global pointer handling ---- */
+function returnToInfinity(){
+  const finalLogo=$('#final .lg');
+  const logoBox=$('#logoBox');
+  if(!finalLogo||!logoBox){
+    app.classList.remove('on');
+    $('#logo').classList.remove('gone');
+    stage='logo';
+    cur=0;
+    return;
+  }
+
+  const start=finalLogo.getBoundingClientRect();
+  const target=logoBox.getBoundingClientRect();
+  const clone=finalLogo.cloneNode(true);
+
+  clone.className='logo-return';
+  clone.style.left=start.left+'px';
+  clone.style.top=start.top+'px';
+  clone.style.width=start.width+'px';
+  clone.style.height=start.height+'px';
+  document.body.appendChild(clone);
+
+  $('#logo').classList.remove('gone');
+  $('#logo').style.opacity='0';
+  app.style.opacity='1';
+
+  requestAnimationFrame(()=>{
+    clone.style.left=target.left+'px';
+    clone.style.top=target.top+'px';
+    clone.style.width=target.width+'px';
+    clone.style.height=target.height+'px';
+    $('#logo').style.opacity='1';
+    app.style.opacity='0';
+  });
+
+  setTimeout(()=>{
+    clone.remove();
+    app.classList.remove('on');
+    app.style.opacity='';
+    $('#logo').style.opacity='';
+    $('#nameModal').classList.remove('show');
+    stage='logo';
+    cur=0;
+    drawing=false;
+    pts=[];
+  },950);
+}
+  /* ---- global pointer handling ---- */
 let down=null;
 addEventListener('pointerdown',e=>{
   down={x:e.clientX,y:e.clientY};
@@ -554,7 +648,13 @@ addEventListener('pointerup',e=>{
     go(FINAL);
     return;
   }
+const r=$('.frame').getBoundingClientRect();
+  const tapX=(e.clientX-r.left)/r.width;
 
+  if(cur===FINAL&&tapX>=.75){
+    returnToInfinity();
+    return;
+  }
   const r=$('.frame').getBoundingClientRect();
 
       if(cur===PETAL && (e.clientX-$('.frame').getBoundingClientRect().left)/$('.frame').getBoundingClientRect().width < .25){
