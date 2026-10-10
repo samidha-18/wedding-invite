@@ -126,6 +126,31 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 .ev-over .maplink{color:var(--white)}#pop .maplink{color:var(--pink)}#popCard .date-time{font-family:var(--f-date)}#popCard .venue-row{font-family:var(--f-venue)}#popCard .host-names{font-family:var(--f-date)}#popCard h2{font-family:var(--f-names)}
 
 /* PETALS */
+/* PETALS */
+.petal-hint{
+  position:absolute;
+  left:8%;
+  right:8%;
+  bottom:max(2rem,env(safe-area-inset-bottom));
+  z-index:8;
+  text-align:center;
+  color:var(--pink);
+  font-family:var(--fd);
+  font-size:1.2rem;
+  letter-spacing:.07em;
+  text-shadow:0 0 5px rgba(255,255,255,.95),
+              0 0 12px rgba(227,132,150,.75),
+              0 0 22px rgba(227,132,150,.4);
+  opacity:0;
+  pointer-events:none;
+}
+.petal-hint.show{
+  animation:petalGlow 2.4s ease-in-out infinite;
+}
+@keyframes petalGlow{
+  0%,100%{opacity:.72;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.035)}
+}
 .petal{position:absolute;top:-90px;display:grid;place-items:center;animation:fall linear forwards;z-index:5;cursor:pointer;will-change:transform}
 .pi{display:block;width:var(--s);height:var(--s);pointer-events:none;animation:tumble var(--td) ease-in-out infinite alternate;opacity:var(--o,1)}
 .pi img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none}
@@ -142,7 +167,7 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 /* FINAL */
 #final{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
 #final .lg{width:34%;margin-bottom:1.6rem}
-#final h1{font-family:var(--fd);font-weight:600;font-size:clamp(2.4rem,11vw,3.4rem);line-height:1.05;color:var(--pink)}
+#final h1{font-family:var(--fd);font-weight:500;font-size:clamp(2.4rem,11vw,3.4rem);line-height:1.05;color:var(--pink)}
 #final .gn{margin-top:1.4rem;font-family:var(--fd);font-style:italic;font-size:1.7rem;color:var(--forest)}
 #final .cp{margin-top:1rem;letter-spacing:.12em;text-transform:none;font-family:var(--f-names);font-size:1.15rem;color:var(--sage)}
 </style>
