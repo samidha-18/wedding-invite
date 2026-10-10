@@ -241,17 +241,17 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
             petalSoftGlow 3.2s 1.4s ease-in-out infinite;
 }
 #app .petal-hint.prompt-pulse{
-  animation:petalThreePulses 1.8s ease-in-out,
+  animation:petalTwoPulses 1.8s ease-in-out,
             petalSoftGlow 3.2s 1.8s ease-in-out infinite;
 }
 @keyframes petalPromptEntrance{
   from{opacity:0;transform:translateY(calc(-50% + 28px))}
   to{opacity:1;transform:translateY(-50%)}
 }
-@keyframes petalThreePulses{
+@keyframes petalTwoPulses{
   0%,100%{opacity:1;transform:translateY(-50%) scale(1)}
-  15%,45%,75%{opacity:1;transform:translateY(-50%) scale(1.12)}
-  30%,60%,90%{opacity:1;transform:translateY(-50%) scale(1)}
+  20%,65%{opacity:1;transform:translateY(-50%) scale(1.05)}
+  42%,87%{opacity:1;transform:translateY(-50%) scale(1)}
 }
 @keyframes petalSoftGlow{
   0%,100%{opacity:1;text-shadow:0 0 8px rgba(255,255,255,.98),0 0 18px rgba(227,132,150,.9),0 0 30px rgba(227,132,150,.55)}
@@ -702,20 +702,19 @@ const r=$('.frame').getBoundingClientRect();
     pts=[];
     return;
   }
-  if(cur===PETAL){
-    const hint=ps&&ps.querySelector('.petal-hint');
-    if(hint&&hint.classList.contains('show')){
-      hint.classList.remove('prompt-pulse');
-      void hint.offsetWidth;
-      hint.classList.add('prompt-pulse');
-      setTimeout(()=>{
-        if(hint.isConnected){
-          hint.classList.remove('prompt-pulse');
-        }
-      },1900);
-    }
-    return;
+  
+if(cur===PETAL){
+  const hint=ps&&ps.querySelector('.petal-hint');
+
+  if(hint&&hint.classList.contains('show')){
+    hint.classList.remove('prompt-pulse');
+    void hint.offsetWidth;
+    hint.classList.add('prompt-pulse');
   }
+
+  return;
+}
+
 
   if((e.clientX-r.left)/r.width<.25){
     dust(e.clientX,e.clientY,{n:16,faint:true,spread:2.5});
