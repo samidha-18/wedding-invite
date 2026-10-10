@@ -184,16 +184,13 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
   animation:petalFadeIn 1.8s ease-out both,
             petalGlow 2.8s 1.8s ease-in-out infinite;
 }
-.petal-hint.prompt-pulse{
-  animation:promptPulse .9s ease-in-out;
+
 }
 @keyframes petalFadeIn{
   from{opacity:0;transform:translateY(12px)}
   to{opacity:.9;transform:translateY(0)}
 }
-@keyframes promptPulse{
-  0%,100%{opacity:.9;transform:scale(1)}
-  45%{opacity:1;transform:scale(1.07)}
+
 }
 @keyframes petalGlow{
   0%,100%{opacity:.72;transform:scale(1)}
@@ -240,19 +237,13 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
   animation:petalPromptEntrance 1.4s ease-out both,
             petalSoftGlow 3.2s 1.4s ease-in-out infinite;
 }
-#app .petal-hint.prompt-pulse{
-  animation:petalTwoPulses 1.8s ease-in-out,
-            petalSoftGlow 3.2s 1.8s ease-in-out infinite;
+
 }
 @keyframes petalPromptEntrance{
   from{opacity:0;transform:translateY(calc(-50% + 28px))}
   to{opacity:1;transform:translateY(-50%)}
 }
-@keyframes petalTwoPulses{
-  0%,100%{opacity:1;transform:translateY(-50%) scale(1)}
-  20%,65%{opacity:1;transform:translateY(-50%) scale(1.05)}
-  42%,87%{opacity:1;transform:translateY(-50%) scale(1)}
-}
+
 @keyframes petalSoftGlow{
   0%,100%{opacity:1;text-shadow:0 0 8px rgba(255,255,255,.98),0 0 18px rgba(227,132,150,.9),0 0 30px rgba(227,132,150,.55)}
   50%{opacity:1;text-shadow:0 0 12px rgba(255,255,255,1),0 0 24px rgba(227,132,150,1),0 0 40px rgba(227,132,150,.75)}
@@ -296,6 +287,9 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
     height .9s cubic-bezier(.2,.8,.2,1),
     opacity .5s ease;
 }
+.hint-text{display:inline-block;transform-origin:center}
+.hint-text.pulse{animation:hintPulse 1.6s ease-in-out 1}
+@keyframes hintPulse{0%,50%,100%{transform:scale(1)}25%,75%{transform:scale(1.05)}}
 </style>
 </head>
 <body>
@@ -431,7 +425,7 @@ function build(){
     }
     if(k==='main')s.insertAdjacentHTML('beforeend',`<div class="intro fx" style="--d:.4s"><div class="eyebrow">A blessing before the celebrations</div><h1>With love, devotion &amp; new beginnings</h1><p class="intro-copy"><!-- Replace this paragraph with the introduction text you will provide. --></p></div><div id="hintG">Offer Bappa a flower</div><div id="drop" aria-label="Flower offering space"></div><div class="main-bappa"><div class="image-fallback" data-gan-fallback hidden>Ganpati image could not be loaded<br><small>${CONFIG.ganpati}</small></div><img class="gan" data-gan-image src="${CONFIG.ganpati}" draggable="false" alt="Ganpati Bappa"></div><div class="tree-art">${CONFIG.tree ? `<img data-tree-image src="${CONFIG.tree}" alt="Wedding invitation tree">` : (CONFIG.drawTree?treeSVG:'')}${CONFIG.flowerPos.map(([l,t])=>`<div class="flower" style="left:${l}%;top:${t}%">${hibImg}</div>`).join('')}</div>`);
     if(k==='puja')s.insertAdjacentHTML('beforeend',`<div class="sit"><div class="image-fallback" data-gan-fallback hidden>Ganpati image could not be loaded<br><small>${CONFIG.ganpati}</small></div><img class="gan" data-gan-image src="${CONFIG.ganpati}" draggable="false" alt="Ganpati Bappa"><div class="hib">${hibImg}</div></div>`);
-    if(i>0){ if(k==='wedding'){ s.insertAdjacentHTML('beforeend', '<div class="petal-hint">Catch a falling petal</div>'); } else { s.insertAdjacentHTML('beforeend', `<div class="ev-over">${evHTML(k,inv.has(k))}</div><button class="next-cue" type="button" aria-label="Tap to continue"><span class="pixie-orbit"></span><span class="next-cue-label">Tap to continue</span></button>`); } }
+    if(i>0){ if(k==='wedding'){ s.insertAdjacentHTML('beforeend', '<div class="petal-hint"><span class="hint-text">Catch a falling petal</span></div>'); } else { s.insertAdjacentHTML('beforeend', `<div class="ev-over">${evHTML(k,inv.has(k))}</div><button class="next-cue" type="button" aria-label="Tap to continue"><span class="pixie-orbit"></span><span class="next-cue-label">Tap to continue</span></button>`); } }
     app.appendChild(s);scenes.push(s)});
   const fin=document.createElement('div');fin.className='scene';fin.id='final';
   const safeGuest=guest.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); fin.innerHTML=`   <div class="final-greeting fx" style="--d:.3s">Dearest ${safeGuest},</div>   <h1>     <span class="fx l" style="--d:.8s;display:block">We look forward</span>     <span class="fx r" style="--d:1.1s;display:block">to seeing you</span>   </h1>   <img class="lg fx" style="--d:1.5s" src="${CONFIG.logo}" alt="Wedding logo" onerror="this.style.display='none'"> `;
@@ -456,38 +450,15 @@ function show(i){
     filled=true;
     for(let k=0;k<14;k++)makePetal(true);
   }
-
-  if(ps&&ps._hintTimer){
-    clearTimeout(ps._hintTimer);
-    ps._hintTimer=null;
-  }
-
+  if(ps&&ps._hintTimer){clearTimeout(ps._hintTimer);ps._hintTimer=null}
   if(i===PETAL&&ps){
     const hint=ps.querySelector('.petal-hint');
     if(hint){
       hint.classList.remove('show');
       ps._hintTimer=setTimeout(()=>{
-        if(cur===PETAL&&!popOpen){
-          hint.classList.add('show');
-        }
+        if(cur===PETAL&&!popOpen)hint.classList.add('show');
         ps._hintTimer=null;
       },5000);
-    }
-  }
-  if(ps&&ps._hintTimer){
-    clearTimeout(ps._hintTimer);
-    ps._hintTimer=null;
-  }
-  if(i===PETAL&&ps){
-    const hint=ps.querySelector('.petal-hint');
-    if(hint){
-      hint.classList.remove('show','prompt-pulse');
-      ps._hintTimer=setTimeout(()=>{
-        if(cur===PETAL&&!popOpen){
-          hint.classList.add('show');
-        }
-        ps._hintTimer=null;
-      },10000);
     }
   }
   scenes.forEach((s,j)=>{s.className='scene'+(j<i?' past':j==i?' active':'')+(j===PETAL&&popOpen?' dim':'')});
@@ -674,60 +645,36 @@ addEventListener('pointerup',e=>{
   if(stage!=='scenes'||!down)return;
   const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y);down=null;
   if(moved>12||e.target.closest('.flower,.petal,#nameModal,a'))return;
-    if(popOpen){
-    closePop();
-    go(FINAL);
-    return;
-  }
-const r=$('.frame').getBoundingClientRect();
+
+  if(popOpen){closePop();go(FINAL);return}
+
+  const r=$('.frame').getBoundingClientRect();
   const tapX=(e.clientX-r.left)/r.width;
 
-  if(cur===FINAL&&tapX>=.75){
-    returnToInfinity();
-    return;
-  }
-  const r=$('.frame').getBoundingClientRect();
+  // Last page: right side returns to the infinity logo
+  if(cur===FINAL&&tapX>=.75){returnToInfinity();return}
 
-      if(cur===PETAL && (e.clientX-$('.frame').getBoundingClientRect().left)/$('.frame').getBoundingClientRect().width < .25){
-    go(cur-1);
-    return;
-  }
-  if(cur===FINAL && (e.clientX-$('.frame').getBoundingClientRect().left)/$('.frame').getBoundingClientRect().width >= .75){
-    app.classList.remove('on');
-    $('#logo').classList.remove('gone');
-    $('#nameModal').classList.remove('show');
-    stage='logo';
-    cur=0;
-    drawing=false;
-    pts=[];
-    return;
-  }
-  
-if(cur===PETAL){
-  const hint=ps&&ps.querySelector('.petal-hint');
-
-  if(hint&&hint.classList.contains('show')){
-    hint.classList.remove('prompt-pulse');
-    void hint.offsetWidth;
-    hint.classList.add('prompt-pulse');
-  }
-
-  return;
-}
-
-
-  if((e.clientX-r.left)/r.width<.25){
+  // Left edge: go back
+  if(tapX<.25){
     dust(e.clientX,e.clientY,{n:16,faint:true,spread:2.5});
     go(cur-1);
     return;
   }
 
-  if(cur>=1&&cur<PETAL){
-    if(scenes[cur].dataset.event==='sangeet'){
-      goWithCircle(cur+1,e.clientX,e.clientY);
-    }else{
-      go(cur+1);
+  // Petal page: a tap pulses the prompt text only
+  if(cur===PETAL){
+    const hint=ps&&ps.querySelector('.petal-hint');
+    if(hint&&hint.classList.contains('show')){
+      const t=hint.firstElementChild;
+      t.classList.remove('pulse');void t.offsetWidth;t.classList.add('pulse');
     }
+    return;
+  }
+
+  // Event pages: advance
+  if(cur>=1&&cur<PETAL){
+    if(scenes[cur].dataset.event==='sangeet')goWithCircle(cur+1,e.clientX,e.clientY);
+    else go(cur+1);
   }
 });
 </script>
