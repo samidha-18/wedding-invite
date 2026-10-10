@@ -348,7 +348,23 @@ const GUESTS={
 const DEFAULT_GUEST=[];
 /* ===================================================== */
 
+
 const $=s=>document.querySelector(s),rnd=(a,b)=>a+Math.random()*(b-a);
+
+function loadImage(img, path, onSuccess, onError) {
+  img.onload = () => {
+    if (onSuccess) onSuccess();
+  };
+  img.onerror = () => {
+    console.error('Image failed to load:', {
+      path,
+      resolvedURL: img.src
+    });
+    if (onError) onError();
+  };
+  img.src = path;
+}
+
 let stage='logo',cur=0,guest='',popOpen=false,locked=false,filled=false,scenes=[],PETAL=0,FINAL=0,ps=null,introTimer=null,introPromptShown=false;
 
 /* ---- pixie dust ---- */
@@ -511,7 +527,22 @@ function goWithCircle(i,clientX,clientY){
 }
 
 /* ---- logo / name ---- */
-const app=$('#app'),li=$('#logoImg');li.src=CONFIG.logo;li.onerror=()=>{li.style.display='none';$('#mono').style.display='block'};
+
+const app=$('#app'),li=$('#logoImg');
+
+loadImage(
+  li,
+  CONFIG.logo,
+  () => {
+    li.style.display = 'block';
+    $('#mono').style.display = 'none';
+  },
+  () => {
+    li.style.display = 'none';
+    $('#mono').style.display = 'block';
+  }
+);
+
 function submitName(){
     const v=$('#nameIn').value.trim();
   const firstName=v.toLowerCase().split(/\s+/)[0];
