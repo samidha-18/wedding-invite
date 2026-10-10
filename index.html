@@ -182,15 +182,11 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 }
 .petal-hint.show{
   animation:petalFadeIn 1.8s ease-out both,
-            petalGlow 2.8s 1.8s ease-in-out infinite;
-}
-
+   petalGlow 2.8s 1.8s ease-in-out infinite;
 }
 @keyframes petalFadeIn{
   from{opacity:0;transform:translateY(12px)}
-  to{opacity:.9;transform:translateY(0)}
-}
-
+    to{opacity:.9;transform:translateY(0)}
 }
 @keyframes petalGlow{
   0%,100%{opacity:.72;transform:scale(1)}
@@ -236,8 +232,6 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 #app .petal-hint.show{
   animation:petalPromptEntrance 1.4s ease-out both,
             petalSoftGlow 3.2s 1.4s ease-in-out infinite;
-}
-
 }
 @keyframes petalPromptEntrance{
   from{opacity:0;transform:translateY(calc(-50% + 28px))}
@@ -355,7 +349,7 @@ const EVENTS={
   mehendi:{title:"Mehendi te Vaavi",date:"thursday, 10th december 2026",time:"5:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
   sangeet:{title:"Sagai & Shor Sharaba",date:"friday, 11th december 2026",time:"7:00 PM onwards",venue:"Embassy Hall, The Tunga Paradise, Andheri E, Mumbai",map:""},
   haldi:{title:"Prem Pithi",date:"saturday, 12th december 2026",time:"05:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
-  wedding:{title:"Mangal Pheras",date:"sunday, 13th december 2026",time:"Jaan Agaman: 10:30 AM<br>Hasta Melap: 12:30 PM,venue:"Grande Hall C, NESCO, Goregaon E, Mumbai", map:""}
+  wedding:{title:"Mangal Pheras",date:"sunday, 13th december 2026",time:"Jaan Agaman: 10:30 AM<br>Hasta Melap: 12:30 PM",venue:"Grande Hall C, NESCO, Goregaon E, Mumbai", map:""}
 };
 // Name (first name, lowercase) → events invited to. Wedding is always shown.
 const GUESTS={
