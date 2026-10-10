@@ -374,6 +374,33 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 
 /* Mangal Pheras: about half the size of the Sagai title */
 #popCard h2{font-size:3.4rem;line-height:1.05}
+
+/* 1: all prompts the same size as "Offer Bappa a flower" */
+#hint,#hint span,
+#app .petal-hint,#app .petal-hint .hint-text,
+.next-cue-label{font-size:clamp(.9rem,3.75vw,1.2rem)}
+#hint{letter-spacing:.15em}
+.next-cue-label{letter-spacing:.08em}
+
+/* 2: tree bobble slower, same movement */
+.scene.active#s0 .tree-art{animation:treeEnter 1.8s cubic-bezier(.2,.75,.25,1) both,treeBobble2 8s 1.8s ease-in-out infinite}
+
+/* 3: event name onwards raised by 10% of the screen height */
+.ev-over{bottom:10%}
+
+/* 4: Mehendi + Haldi titles and "Tap to continue" in white */
+.scene[data-event="mehendi"] .ev-over h2,
+.scene[data-event="haldi"] .ev-over h2,
+.scene[data-event="mehendi"] .next-cue-label,
+.scene[data-event="haldi"] .next-cue-label{color:var(--white)}
+.scene[data-event="mehendi"] .pixie-orbit,
+.scene[data-event="haldi"] .pixie-orbit{border-color:rgba(255,255,255,.85)}
+.scene[data-event="mehendi"] .pixie-orbit::before,.scene[data-event="mehendi"] .pixie-orbit::after,
+.scene[data-event="haldi"] .pixie-orbit::before,.scene[data-event="haldi"] .pixie-orbit::after{background:var(--white);box-shadow:0 0 7px var(--white)}
+
+/* 5: hide "Catch a falling petal" while the wedding details are open; Mangal Pheras 20% bigger */
+.scene.dim .petal-hint{opacity:0 !important;transition:opacity .4s}
+#popCard h2{font-size:4.1rem}  
   
 </style>
 </head>
