@@ -290,6 +290,30 @@ html,body{height:100%;background:var(--cream);color:var(--forest);font-family:va
 .hint-text{display:inline-block;transform-origin:center}
 .hint-text.pulse{animation:hintPulse 1.6s ease-in-out 1}
 @keyframes hintPulse{0%,50%,100%{transform:scale(1)}25%,75%{transform:scale(1.05)}}
+/* 5: main BG anchored left */
+.scene[data-event="main"] img.bg{object-position:left center}
+
+/* 11 + 9: no green panel, weight 500, smaller Puja title on phones */
+.ev-over{background:none !important;text-shadow:0 2px 14px rgba(26,61,40,.9),0 0 3px rgba(26,61,40,.6)}
+.ev-over h2,.ev-over p{font-weight:500 !important;-webkit-text-stroke:.3px currentColor}
+@media(max-width:600px){.scene[data-event="puja"] .ev-over h2{font-size:4.9rem !important}}
+
+/* 14: final page weight */
+.final-greeting,#final h1{font-weight:500 !important;-webkit-text-stroke:.3px currentColor}
+
+/* 6: "Offer Bappa a flower" at the extreme bottom, behind the circle, magical glow */
+#hintG{animation:none;top:auto;bottom:max(1.1rem,env(safe-area-inset-bottom));left:5%;width:90%;z-index:3;font-family:var(--fd);font-size:1.3rem;letter-spacing:.07em;text-transform:none;color:var(--pink);text-shadow:0 0 5px rgba(255,255,255,.95),0 0 12px rgba(227,132,150,.75),0 0 22px rgba(227,132,150,.4)}
+#hintG.show{animation:petalFadeIn 1.8s ease-out both,petalGlow 2.8s 1.8s ease-in-out infinite}
+
+/* 7 + 8: one persistent Ganpati + flower that shifts up between page 1 and 2 */
+#bappa{position:absolute;left:17%;width:66%;top:44%;height:49%;z-index:4;pointer-events:none;transition:top 1s cubic-bezier(.65,0,.25,1),height 1s cubic-bezier(.65,0,.25,1),opacity .6s}
+#bappa.up{top:8%;height:46%}
+#bappa.gone{opacity:0}
+#bappa img.bgan{display:block;width:100%;height:100%;object-fit:contain;object-position:bottom center;opacity:0;filter:drop-shadow(0 5px 10px rgba(26,61,40,.12))}
+#bappa.in img.bgan{animation:flyU 1.5s .5s cubic-bezier(.2,.8,.2,1) both,ganpatiFloat 4.5s 2s ease-in-out infinite}
+.bappa-flower{position:absolute;left:50%;bottom:0;width:58px;height:58px;transform:translate(-50%,50%);opacity:0;transition:opacity .5s;filter:drop-shadow(0 2px 6px rgba(26,61,40,.35))}
+.bappa-flower img,.bappa-flower svg{width:100%;height:100%;object-fit:contain;display:block}
+#bappa.offered .bappa-flower{opacity:1}
 </style>
 </head>
 <body>
@@ -321,7 +345,7 @@ const CONFIG={
   hibiscus:"assets/hibiscus.png",    // transparent PNG
   petal:"assets/petal.png",          // transparent PNG
   drawTree:true,                     // false if your Main BG already has a tree
-  flowerPos:[[18,76],[56,64],[82,79]], // three hibiscus positioned lower in the tree
+  flowerPos:[[12,76],[48,62],[30,80]], // three hibiscus positioned lower in the tree
   bg:{main:"assets/bg-main.jpg",puja:"assets/bg-puja.jpg",mehendi:"assets/bg-mehendi.jpg",sangeet:"assets/bg-sangeet.jpg",haldi:"assets/bg-haldi.jpg",wedding:"assets/bg-wedding.jpg"}
 };
 // Page order: Main → Puja → Mehendi → Sagai → Haldi → Wedding (petals) → Thank-you
@@ -331,7 +355,7 @@ const EVENTS={
   mehendi:{title:"Mehendi te Vaavi",date:"thursday, 10th december 2026",time:"5:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
   sangeet:{title:"Sagai & Shor Sharaba",date:"friday, 11th december 2026",time:"7:00 PM onwards",venue:"Embassy Hall, The Tunga Paradise, Andheri E, Mumbai",map:""},
   haldi:{title:"Prem Pithi",date:"saturday, 12th december 2026",time:"05:00 PM onwards",venue:"Family Residence, Mumbai",map:""},
-  wedding:{title:"Mangal Pheras",date:"sunday, 13th december 2026",time:"Jaan Agaman: 10:30 AM & Hasta Melap: 12:30 PM",venue:"Grande Hall C, NESCO, Goregaon E, Mumbai", note:"Join us as we begin forever",map:""}
+  wedding:{title:"Mangal Pheras",date:"sunday, 13th december 2026",time:"Jaan Agaman: 10:30 AM<br>Hasta Melap: 12:30 PM,venue:"Grande Hall C, NESCO, Goregaon E, Mumbai", map:""}
 };
 // Name (first name, lowercase) → events invited to. Wedding is always shown.
 const GUESTS={
@@ -423,13 +447,13 @@ function build(){
       bg.addEventListener('error',()=>{         bgFallback.hidden=false;         bgFallback.innerHTML=           `Background image could not be loaded<br>           <small>Path: ${src}</small><br>           <small>Resolved URL: ${bg.src}</small><br>           <small>Check the browser Console and Network tabs for the exact error.</small>`;         console.error('Background image failed:',{           path:src,           resolvedURL:bg.src         });       });
       if(bg.complete){if(bg.naturalWidth>0)bgFallback.hidden=true;else {bgFallback.hidden=false;}}
     }
-    if(k==='main')s.insertAdjacentHTML('beforeend',`<div class="intro fx" style="--d:.4s"><div class="eyebrow">A blessing before the celebrations</div><h1>With love, devotion &amp; new beginnings</h1><p class="intro-copy"><!-- Replace this paragraph with the introduction text you will provide. --></p></div><div id="hintG">Offer Bappa a flower</div><div id="drop" aria-label="Flower offering space"></div><div class="main-bappa"><div class="image-fallback" data-gan-fallback hidden>Ganpati image could not be loaded<br><small>${CONFIG.ganpati}</small></div><img class="gan" data-gan-image src="${CONFIG.ganpati}" draggable="false" alt="Ganpati Bappa"></div><div class="tree-art">${CONFIG.tree ? `<img data-tree-image src="${CONFIG.tree}" alt="Wedding invitation tree">` : (CONFIG.drawTree?treeSVG:'')}${CONFIG.flowerPos.map(([l,t])=>`<div class="flower" style="left:${l}%;top:${t}%">${hibImg}</div>`).join('')}</div>`);
-    if(k==='puja')s.insertAdjacentHTML('beforeend',`<div class="sit"><div class="image-fallback" data-gan-fallback hidden>Ganpati image could not be loaded<br><small>${CONFIG.ganpati}</small></div><img class="gan" data-gan-image src="${CONFIG.ganpati}" draggable="false" alt="Ganpati Bappa"><div class="hib">${hibImg}</div></div>`);
+    if(k==='main')s.insertAdjacentHTML('beforeend',`<div class="intro fx" style="--d:.4s"><div class="eyebrow">A blessing before the celebrations</div><h1>With love, devotion &amp; new beginnings</h1><p class="intro-copy"><!-- Replace this paragraph with the introduction text you will provide. --></p></div><div id="hintG">Offer Bappa a flower</div><div id="drop" aria-label="Flower offering space"></div><div class="tree-art">${CONFIG.tree ? `<img data-tree-image src="${CONFIG.tree}" alt="Wedding invitation tree">` : (CONFIG.drawTree?treeSVG:'')}${CONFIG.flowerPos.map(([l,t])=>`<div class="flower" style="left:${l}%;top:${t}%">${hibImg}</div>`).join('')}</div>`);
+    
     if(i>0){ if(k==='wedding'){ s.insertAdjacentHTML('beforeend', '<div class="petal-hint"><span class="hint-text">Catch a falling petal</span></div>'); } else { s.insertAdjacentHTML('beforeend', `<div class="ev-over">${evHTML(k,inv.has(k))}</div><button class="next-cue" type="button" aria-label="Tap to continue"><span class="pixie-orbit"></span><span class="next-cue-label">Tap to continue</span></button>`); } }
     app.appendChild(s);scenes.push(s)});
   const fin=document.createElement('div');fin.className='scene';fin.id='final';
   const safeGuest=guest.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); fin.innerHTML=`   <div class="final-greeting fx" style="--d:.3s">Dearest ${safeGuest},</div>   <h1>     <span class="fx l" style="--d:.8s;display:block">We look forward</span>     <span class="fx r" style="--d:1.1s;display:block">to seeing you</span>   </h1>   <img class="lg fx" style="--d:1.5s" src="${CONFIG.logo}" alt="Wedding logo" onerror="this.style.display='none'"> `;
-  app.appendChild(fin);scenes.push(fin);ps=scenes[PETAL];
+  app.appendChild(fin);scenes.push(fin);ps=scenes[PETAL]; app.insertAdjacentHTML('beforeend',`<div id="bappa"><div class="image-fallback" data-gan-fallback hidden>Ganpati image could not be loaded<br><small>${CONFIG.ganpati}</small></div><img class="bgan" data-gan-image src="${CONFIG.ganpati}" draggable="false" alt="Ganpati Bappa"><div class="bappa-flower">${hibImg}</div></div>`);
   scenes[0].querySelectorAll('.flower').forEach(wireFlower);
   scenes.forEach((scene,idx)=>{const cue=scene.querySelector('.next-cue');if(cue)cue.addEventListener('pointerup',e=>{e.stopPropagation();go(idx+1)});});
   scenes.forEach(scene=>{
@@ -445,7 +469,7 @@ function build(){
   });
 }
 function show(i){
-  cur=i;
+  cur=i;const bp=$('#bappa');if(bp){bp.classList.toggle('up',i>=1);bp.classList.toggle('gone',i>=2);if(i===0)bp.classList.remove('offered')}
   if(i===PETAL&&!filled){
     filled=true;
     for(let k=0;k<14;k++)makePetal(true);
@@ -458,7 +482,7 @@ function show(i){
       ps._hintTimer=setTimeout(()=>{
         if(cur===PETAL&&!popOpen)hint.classList.add('show');
         ps._hintTimer=null;
-      },5000);
+      },2000);
     }
   }
   scenes.forEach((s,j)=>{s.className='scene'+(j<i?' past':j==i?' active':'')+(j===PETAL&&popOpen?' dim':'')});
@@ -540,7 +564,7 @@ function submitName(){
   $('#nameIn').blur();
   build();
   $('#nameModal').classList.remove('show');$('#logo').classList.add('gone');
-  stage='scenes';app.classList.add('on');show(0);
+  stage='scenes';app.classList.add('on');show(0);$('#bappa').classList.add('in');
 }
 $('#enterBtn').onclick=submitName;
 $('#nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')submitName()});
@@ -555,7 +579,7 @@ function wireFlower(f){
     const d=$('#drop').getBoundingClientRect(),dx=d.left+d.width/2,dy=d.top+d.height/2;
     if(Math.hypot(e.clientX-dx,e.clientY-dy)<d.width*.8&&!locked){
       locked=true;const r=f.getBoundingClientRect();tx+=dx-(r.left+r.width/2);ty+=dy-(r.top+r.height/2);f.style.transform=T(1);
-      burst(dx,dy,90,{spread:5});setTimeout(()=>{f.style.opacity=0;go(1)},750)}
+      burst(dx,dy,90,{spread:5});setTimeout(()=>{f.style.opacity=0;$('#bappa').classList.add('offered');go(1)},750)}
     else{tx=ty=0;f.style.transform=''}});
 }
 
@@ -574,58 +598,37 @@ spawnPetal();
 function openPop(){
   // Falling petals on the final page reveal wedding details only—never rotate through other ceremonies.
   const e=EVENTS.wedding;
-  const row=(label,value,cls='')=>value?`<div class="row ${cls}"><b>${label}</b>${value}</div>`:'';
+  const row=(label,value,cls='')=>value?`<div class="row ${cls}">${value}</div>`:'';
   $('#popCard').innerHTML=`<h2 class="fx u" style="--d:.1s">${e.title}</h2>${row('Date',e.date,'date-time fx l')}${row('Time',e.time,'date-time fx r')}${row('Venue',e.venue,'venue-row fx l')}${row('Hosted by',e.hosts,'host-names fx r')}${row('Dress code',e.dress,'fx r')}${e.note?`<div class="note fx u" style="--d:.9s">${e.note}</div>`:''}${mapLink(e,1.1)}`;
   popOpen=true;$('#pop').classList.add('show');ps.classList.add('dim');
 }
 function closePop(){popOpen=false;$('#pop').classList.remove('show');ps&&ps.classList.remove('dim')}
 
 function returnToInfinity(){
-  const finalLogo=$('#final .lg');
-  const logoBox=$('#logoBox');
-  if(!finalLogo||!logoBox){
-    app.classList.remove('on');
-    $('#logo').classList.remove('gone');
-    stage='logo';
-    cur=0;
-    return;
-  }
-
-  const start=finalLogo.getBoundingClientRect();
-  const target=logoBox.getBoundingClientRect();
-  const clone=finalLogo.cloneNode(true);
-
+  const fl=$('#final .lg'),logo=$('#logo'),box=$('#logoBox'),hint=$('#hint'),fin=$('#final');
+  if(!fl||fl.style.display==='none'){logo.classList.remove('gone');app.classList.remove('on');stage='logo';cur=0;drawing=false;pts=[];return}
+  stage='returning';
+  const start=fl.getBoundingClientRect();
+  const clone=fl.cloneNode(true);
   clone.className='logo-return';
-  clone.style.left=start.left+'px';
-  clone.style.top=start.top+'px';
-  clone.style.width=start.width+'px';
-  clone.style.height=start.height+'px';
+  clone.style.cssText=`left:${start.left}px;top:${start.top}px;width:${start.width}px;height:${start.height}px;opacity:1`;
   document.body.appendChild(clone);
-
-  $('#logo').classList.remove('gone');
-  $('#logo').style.opacity='0';
-  app.style.opacity='1';
-
-  requestAnimationFrame(()=>{
-    clone.style.left=target.left+'px';
-    clone.style.top=target.top+'px';
-    clone.style.width=target.width+'px';
-    clone.style.height=target.height+'px';
-    $('#logo').style.opacity='1';
-    app.style.opacity='0';
-  });
-
+  fl.style.visibility='hidden';
+  box.style.visibility='hidden';hint.style.visibility='hidden';
+  fin.style.transition='opacity .6s';fin.style.opacity='0';
+  logo.classList.remove('gone');
+  const target=box.getBoundingClientRect();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    clone.style.left=target.left+'px';clone.style.top=target.top+'px';
+    clone.style.width=target.width+'px';clone.style.height=target.height+'px';
+  }));
   setTimeout(()=>{
+    box.style.visibility='';hint.style.visibility='';
     clone.remove();
     app.classList.remove('on');
-    app.style.opacity='';
-    $('#logo').style.opacity='';
     $('#nameModal').classList.remove('show');
-    stage='logo';
-    cur=0;
-    drawing=false;
-    pts=[];
-  },950);
+    stage='logo';cur=0;drawing=false;pts=[];
+  },1000);
 }
   /* ---- global pointer handling ---- */
 let down=null;
@@ -673,8 +676,7 @@ addEventListener('pointerup',e=>{
 
   // Event pages: advance
   if(cur>=1&&cur<PETAL){
-    if(scenes[cur].dataset.event==='sangeet')goWithCircle(cur+1,e.clientX,e.clientY);
-    else go(cur+1);
+        go(cur+1);
   }
 });
 </script>
